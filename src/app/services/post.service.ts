@@ -7,27 +7,40 @@ import {PaginatedResponse} from '../models/paginated-response';
 import {Post} from '../models/post';
 
 const getPostsQuery = gql`
-  query GetPosts {
-    posts {
-      data {
-        id
-        title
-        body
-      }
+    query GetPosts {
+        posts {
+            data {
+            id
+            title
+            body
+            }
+        }
     }
-  }
 `;
 
 const createPostMutation = gql`
-  mutation (
-    $input: CreatePostInput!
-  ) {
-    createPost(input: $input) {
-      id
-      title
-      body
+    mutation (
+        $input: CreatePostInput!
+    ) {
+        createPost(input: $input) {
+          id
+          title
+          body
+        }
     }
-  }
+`;
+
+const updatePostMutation = gql`
+    mutation (
+        $id: ID!,
+        $input: UpdatePostInput!
+    ) {
+        updatePost(id: $id, input: $input) {
+            id
+            title
+            body
+        }
+    }
 `;
 
 @Injectable({
@@ -38,6 +51,7 @@ export class PostService {
     private _nextPostId = 101;
     private _createdPosts: Post[] = [];
     private _deletedPostsIds: string[] = [];
+    private _updatedPosts: Map<string, Post> = new Map();
 
     private _apiPosts$: Observable<Post[]>;
 
@@ -57,6 +71,12 @@ export class PostService {
                 return posts
                     .filter(post => !this._deletedPostsIds.includes(post.id))
                     .concat(this._createdPosts)
+                    .map(post => {
+                        if (this._updatedPosts.has(post.id)) {
+                            return this._updatedPosts.get(post.id) as Post
+                        }
+                        return post
+                    })
             }));
     }
 
@@ -96,6 +116,24 @@ export class PostService {
             tap(post => {
                 this._createdPosts.push(post);
                 this._nextPostId++;
+            })
+        )
+    }
+
+    update(post: Post): Observable<Post> {
+        return this._apollo.mutate({
+            mutation: updatePostMutation,
+            variables: {
+                id: post.id,
+                input: {
+                    title: post.title,
+                    body: post.body
+                }
+            }
+        }).pipe(
+            map(() => post),
+            tap(post => {
+                this._updatedPosts.set(post.id, {...post});
             })
         )
     }

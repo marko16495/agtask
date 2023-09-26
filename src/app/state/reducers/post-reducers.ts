@@ -6,7 +6,8 @@ const initialState: PostsState = {
     posts: [],
     totalCount: 0,
     loading: false,
-    createPostInProgress: false
+    createPostInProgress: false,
+    updatePostInProgress: false
 }
 
 export const postReducer = createReducer(
@@ -38,7 +39,8 @@ export const postReducer = createReducer(
             posts: [],
             totalCount: 0,
             loading: false,
-            createPostInProgress: false
+            createPostInProgress: false,
+            updatePostInProgress: false
         }
     }),
     on(PostsActions.CREATE_POST_INIT, (state, args) => {
@@ -51,6 +53,18 @@ export const postReducer = createReducer(
         return {
             ...state,
             createPostInProgress: false
+        }
+    }),
+    on(PostsActions.UPDATE_POST_INIT, (state, args) => {
+        return {
+            ...state,
+            updatePostInProgress: true
+        }
+    }),
+    on(PostsActions.UPDATE_POST_SUCCESS, (state, args) => {
+        return {
+            ...state,
+            updatePostInProgress: false
         }
     }),
 )

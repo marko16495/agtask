@@ -17,8 +17,7 @@ export class PostEffects {
         private readonly actions$: Actions,
         private readonly store: Store<AppState>,
         private readonly postService: PostService
-    ) {
-    }
+    ) { }
 
     loadPosts$ = createEffect(() =>
         this.actions$.pipe(
@@ -77,7 +76,8 @@ export class PostEffects {
             map(([action, request]) => {
                 return PostsActions.LOAD_INIT({
                     request: {
-                        ...request as GetPostsRequest,
+                        pageIndex: 0,
+                        pageSize: request!.pageSize,
                         filter: action.filter ?? ''
                     }
                 })
@@ -97,7 +97,7 @@ export class PostEffects {
     createPostSuccess$ = createEffect(() =>
         this.actions$.pipe(
             ofType(PostsActions.CREATE_POST_SUCCESS),
-            map(response => PostsActions.RELOAD()),
+            map(() => PostsActions.RELOAD()),
         )
     )
 
@@ -113,6 +113,22 @@ export class PostEffects {
                     request: request as GetPostsRequest
                 })
             })
+        )
+    )
+
+    updatePost$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(PostsActions.UPDATE_POST_INIT),
+            switchMap((action) => this.postService.update(action.body)),
+            map(response => PostsActions.UPDATE_POST_SUCCESS({response: response})),
+            catchError(error => of(PostsActions.UPDATE_POST_FAILURE({error: error})))
+        )
+    )
+
+    updatePostSuccess$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(PostsActions.UPDATE_POST_SUCCESS),
+            map(() => PostsActions.RELOAD()),
         )
     )
 

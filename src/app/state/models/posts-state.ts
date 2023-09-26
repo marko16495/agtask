@@ -8,4 +8,5 @@ export interface PostsState {
     loading: boolean;
     error?: string;
     createPostInProgress: boolean;
+    updatePostInProgress: boolean;
 }

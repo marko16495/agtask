@@ -45,4 +45,16 @@ export const PostsActions = {
         '[Posts] Create post failure',
         props<{ error: any }>()
     ),
+    UPDATE_POST_INIT: createAction(
+        '[Posts] Update post init',
+        props<{ body: Post }>()
+    ),
+    UPDATE_POST_SUCCESS: createAction(
+        '[Posts] Update post success',
+        props<{ response: Post }>()
+    ),
+    UPDATE_POST_FAILURE: createAction(
+        '[Posts] Update post failure',
+        props<{ error: any }>()
+    ),
 }
