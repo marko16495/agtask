@@ -4,7 +4,7 @@ import {AppState} from '../models/app-state';
 import {postReducer} from './post-reducers';
 
 export const reducers: ActionReducerMap<AppState> = {
-  posts: postReducer
+    posts: postReducer
 };
 
 

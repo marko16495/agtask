@@ -1,15 +1,3 @@
-<div *ngFor="let post of posts$ | async">
-  {{post.title}}
+<div class="p-4">
+  <router-outlet></router-outlet>
 </div>
-
-<p>
-  page: {{(request$ | async)!.pageIndex + 1}}
-</p>
-
-<button (click)="prevPage()" [disabled]="isFirstPage$ | async">
-  prev
-</button>
-
-<button (click)="nextPage()" [disabled]="isLastPagePage$ | async">
-  next
-</button>
