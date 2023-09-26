@@ -36,6 +36,8 @@ export class PostListComponent implements OnInit, OnDestroy {
     isFirstPage$ = this.store.select(PostSelectors.isFirstPage);
     isLastPagePage$ = this.store.select(PostSelectors.isLastPage);
 
+    deletePostInProgress$ = this.store.select(PostSelectors.deletePostInProgress);
+
     private destroy$ = new Subject<void>();
 
     constructor(
@@ -64,7 +66,7 @@ export class PostListComponent implements OnInit, OnDestroy {
         this.destroy$.complete();
     }
 
-    prevPage() {
+    previousPage() {
         this.store.dispatch(PostsActions.PREVIOUS_PAGE());
     }
 
@@ -112,6 +114,10 @@ export class PostListComponent implements OnInit, OnDestroy {
         this.actions$.pipe(ofType(PostsActions.UPDATE_POST_FAILURE))
             .pipe(takeUntil(dialogRef.closed))
             .subscribe(() => dialogRef.disableClose = false)
+    }
+
+    deletePost(post: Post) {
+        this.store.dispatch(PostsActions.DELETE_POST_INIT({body: post}));
     }
 
     private _createPostUpdateDialog(post: Post) {

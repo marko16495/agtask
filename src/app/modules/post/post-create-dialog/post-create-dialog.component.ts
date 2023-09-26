@@ -28,7 +28,7 @@ export class PostCreateDialogComponent {
 
     constructor(public dialogRef: DialogRef<string>) { }
 
-    onSubmit() {
+    submit() {
         if (this.formGroup.invalid) {
             return;
         }

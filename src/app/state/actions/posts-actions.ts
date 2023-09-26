@@ -57,4 +57,16 @@ export const PostsActions = {
         '[Posts] Update post failure',
         props<{ error: any }>()
     ),
+    DELETE_POST_INIT: createAction(
+        '[Posts] Delete post init',
+        props<{ body: Post }>()
+    ),
+    DELETE_POST_SUCCESS: createAction(
+        '[Posts] Delete post success',
+        props<{ response: Post }>()
+    ),
+    DELETE_POST_FAILURE: createAction(
+        '[Posts] Delete post failure',
+        props<{ error: any }>()
+    ),
 }

@@ -24,5 +24,6 @@ export const PostSelectors = {
         }
         const nextPageStartIndex = (state.posts.request.pageIndex + 1) * state.posts.request.pageSize;
         return nextPageStartIndex >= state.posts.totalCount
-    }
+    },
+    deletePostInProgress: (state: AppState) => state.posts.deletePostInProgress,
 }

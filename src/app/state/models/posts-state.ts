@@ -9,4 +9,5 @@ export interface PostsState {
     error?: string;
     createPostInProgress: boolean;
     updatePostInProgress: boolean;
+    deletePostInProgress: boolean;
 }

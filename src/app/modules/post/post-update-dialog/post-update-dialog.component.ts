@@ -35,7 +35,7 @@ export class PostUpdateDialogComponent implements OnInit {
         this.formGroup.patchValue(this.data);
     }
 
-    onSubmit() {
+    submit() {
         if (this.formGroup.invalid) {
             return;
         }

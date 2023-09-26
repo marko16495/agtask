@@ -14,16 +14,16 @@ import {PostSelectors} from '../selectors/post-selectors';
 export class PostEffects {
 
     constructor(
-        private readonly actions$: Actions,
-        private readonly store: Store<AppState>,
-        private readonly postService: PostService
+        private _actions$: Actions,
+        private _store: Store<AppState>,
+        private _postService: PostService
     ) { }
 
     loadPosts$ = createEffect(() =>
-        this.actions$.pipe(
+        this._actions$.pipe(
             ofType(PostsActions.LOAD_INIT),
-            switchMap((action) => this.postService.getAll(action.request).pipe(
-                takeUntil(this.actions$.pipe(ofType(PostsActions.CLEAR)))
+            switchMap((action) => this._postService.getAll(action.request).pipe(
+                takeUntil(this._actions$.pipe(ofType(PostsActions.CLEAR)))
             )),
             map(response => PostsActions.LOAD_SUCCESS({response: response})),
             catchError(error => of(PostsActions.LOAD_FAILURE({error: error})))
@@ -31,13 +31,13 @@ export class PostEffects {
     )
 
     nextPage$ = createEffect(() =>
-        this.actions$.pipe(
+        this._actions$.pipe(
             ofType(PostsActions.NEXT_PAGE),
             withLatestFrom(
-                this.store.select(PostSelectors.request)
+                this._store.select(PostSelectors.request)
             ),
             filter(([, request]) => !!request),
-            map(([x, request]) => {
+            map(([, request]) => {
                 return PostsActions.LOAD_INIT({
                     request: {
                         ...request as GetPostsRequest,
@@ -49,10 +49,10 @@ export class PostEffects {
     )
 
     previousPage$ = createEffect(() =>
-        this.actions$.pipe(
+        this._actions$.pipe(
             ofType(PostsActions.PREVIOUS_PAGE),
             withLatestFrom(
-                this.store.select(PostSelectors.request)
+                this._store.select(PostSelectors.request)
             ),
             filter(([, request]) => !!request),
             map(([, request]) => {
@@ -67,10 +67,10 @@ export class PostEffects {
     )
 
     filter$ = createEffect(() =>
-        this.actions$.pipe(
+        this._actions$.pipe(
             ofType(PostsActions.FILTER),
             withLatestFrom(
-                this.store.select(PostSelectors.request)
+                this._store.select(PostSelectors.request)
             ),
             filter(([, request]) => !!request),
             map(([action, request]) => {
@@ -86,26 +86,26 @@ export class PostEffects {
     )
 
     createPost$ = createEffect(() =>
-        this.actions$.pipe(
+        this._actions$.pipe(
             ofType(PostsActions.CREATE_POST_INIT),
-            switchMap((action) => this.postService.create(action.body)),
+            switchMap((action) => this._postService.create(action.body)),
             map(response => PostsActions.CREATE_POST_SUCCESS({response: response})),
             catchError(error => of(PostsActions.CREATE_POST_FAILURE({error: error})))
         )
     )
 
     createPostSuccess$ = createEffect(() =>
-        this.actions$.pipe(
+        this._actions$.pipe(
             ofType(PostsActions.CREATE_POST_SUCCESS),
             map(() => PostsActions.RELOAD()),
         )
     )
 
     reload$ = createEffect(() =>
-        this.actions$.pipe(
+        this._actions$.pipe(
             ofType(PostsActions.RELOAD),
             withLatestFrom(
-                this.store.select(PostSelectors.request)
+                this._store.select(PostSelectors.request)
             ),
             filter(([, request]) => !!request),
             map(([, request]) => {
@@ -117,17 +117,33 @@ export class PostEffects {
     )
 
     updatePost$ = createEffect(() =>
-        this.actions$.pipe(
+        this._actions$.pipe(
             ofType(PostsActions.UPDATE_POST_INIT),
-            switchMap((action) => this.postService.update(action.body)),
+            switchMap((action) => this._postService.update(action.body)),
             map(response => PostsActions.UPDATE_POST_SUCCESS({response: response})),
             catchError(error => of(PostsActions.UPDATE_POST_FAILURE({error: error})))
         )
     )
 
     updatePostSuccess$ = createEffect(() =>
-        this.actions$.pipe(
+        this._actions$.pipe(
             ofType(PostsActions.UPDATE_POST_SUCCESS),
+            map(() => PostsActions.RELOAD()),
+        )
+    )
+
+    deletePost$ = createEffect(() =>
+        this._actions$.pipe(
+            ofType(PostsActions.DELETE_POST_INIT),
+            switchMap((action) => this._postService.delete(action.body)),
+            map(response => PostsActions.DELETE_POST_SUCCESS({response: response})),
+            catchError(error => of(PostsActions.DELETE_POST_FAILURE({error: error})))
+        )
+    )
+
+    deletePostSuccess$ = createEffect(() =>
+        this._actions$.pipe(
+            ofType(PostsActions.DELETE_POST_SUCCESS),
             map(() => PostsActions.RELOAD()),
         )
     )
