@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Apollo, gql} from 'apollo-angular';
 import {map, Observable, shareReplay, tap} from 'rxjs';
+import {GetPostsRequest} from '../models/get-posts-request';
 import {PaginatedResponse} from '../models/paginated-response';
 import {Post} from '../models/post';
 
@@ -55,13 +56,13 @@ export class PostService {
         }));
   }
 
-  getAll(pageIndex: number, pageSize: number, filter?: string): Observable<PaginatedResponse<Post>> {
+  getAll(request: GetPostsRequest): Observable<PaginatedResponse<Post>> {
     return this._allPosts$.pipe(map(posts => {
-      let filteredPosts = filter
-          ? posts.filter(post => post.title.toLowerCase().includes(filter.toLowerCase()))
+      let filteredPosts = request.filter
+          ? posts.filter(post => post.title.toLowerCase().includes(request.filter!.toLowerCase()))
           : posts;
-      const startIndex = pageIndex * pageSize;
-      const endIndex = startIndex + pageSize;
+      const startIndex = request.pageIndex * request.pageSize;
+      const endIndex = startIndex + request.pageSize;
       const data = filteredPosts.slice(startIndex, endIndex);
       return {
         data: data,
