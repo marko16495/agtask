@@ -15,6 +15,7 @@ import {PostUpdateDialogComponent} from '../post-update-dialog/post-update-dialo
 @Component({
     selector: 'app-post-list',
     templateUrl: './post-list.component.html',
+    styleUrls: ['./post-list.component.scss'],
     imports: [
         AsyncPipe,
         NgForOf,
@@ -44,7 +45,8 @@ export class PostListComponent implements OnInit, OnDestroy {
         private actions$: Actions,
         private store: Store<AppState>,
         private dialog: Dialog,
-    ) { }
+    ) {
+    }
 
     ngOnInit() {
         this.store.dispatch(PostsActions.LOAD_INIT({
